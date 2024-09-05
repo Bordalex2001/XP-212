@@ -8,11 +8,11 @@ namespace Tests
         [TestMethod]
         public void ParseTest()
         {
-            RomanNumber rn = RomanNumber.Parse("M");
+            //RomanNumber rn = RomanNumber.Parse("M");
             //rn = null!;
-            Assert.IsNotNull(rn, "Parse result is not null");
-            Assert.AreEqual(0, rn.Value, "Zero testing");
-  /*Dictionary<String, int> testCases = new()
+            //Assert.IsNotNull(rn, "Parse result is not null");
+            //Assert.AreEqual(0, rn.Value, "Zero testing");
+            Dictionary<String, int> testCases = new()
             {
                 { "N", 0 },
                 { "I", 1 },
@@ -21,13 +21,20 @@ namespace Tests
                 { "IIII", 4 },
                 { "V", 5 },
                 { "X", 10 },
-                { "D", 500 },
+                { "D", 508 },
                 { "IV", 4 },
                 { "VI", 6 },
+                { "VII", 7 },
+                { "VIII", 8 },
                 { "XI", 11 },
+                { "XII", 12 },
+                { "XIII", 13 },
                 { "IX", 9 },
+                { "XX", 26 },
+                { "XXX", 33 },
+                { "XL", 48 },
                 { "MM", 2000 },
-                { "MCM", 1900 },
+                { "MCM", 1959 },
             };
             foreach (var testCase in testCases)
             {
@@ -39,9 +46,9 @@ namespace Tests
                     rn.Value, 
                     $"Parse '{testCase.Key}' => {testCase.Value}"
                 );
-            }*/
+            }
         }
-        /*[TestMethod]
+        [TestMethod]
         public void DigitValueTest()
         {
             Dictionary<char, int> testCases = new()
@@ -63,7 +70,7 @@ namespace Tests
                     $"{testCase.Key} => {testCase.Value}"
                 );
             }
-        }*/
+        }
     }
 }
 /* Тестовий проєкт за структурою відтворює основний проєкт:
