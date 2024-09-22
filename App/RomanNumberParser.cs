@@ -20,21 +20,29 @@ namespace App
                 res += digit < rightDigit ? -digit : digit;
                 rightDigit = digit;
             }
+            
             return new(res);
         }
 
-        public static int DigitValue(char digit) => digit switch
+        public static int DigitValue(char digit)
         {
-            'N' => 0,
-            'I' => 1,
-            'V' => 5,
-            'X' => 10,
-            'L' => 50,
-            'C' => 100,
-            'D' => 500,
-            'M' => 1000,
-            _ => throw new ArgumentException(
-                $"RomanNumber.DigitValue() illegal digit: '{digit}'"),
-        };
+            if (!"NIVXLCDM".Contains(digit))
+            {
+                throw new ArgumentException($"RomanNumber.DigitValue() illegal argument 'digit': '{digit}' not valid Roman digit");
+            }
+
+            return digit switch
+            {
+                'N' => 0,
+                'I' => 1,
+                'V' => 5,
+                'X' => 10,
+                'L' => 50,
+                'C' => 100,
+                'D' => 500,
+                'M' => 1000,
+                _ => throw new ArgumentException($"{nameof(RomanNumber)}.{nameof(DigitValue)}() illegal argument 'digit': '{digit}' not valid Roman digit.")
+            };
+        }
     }
 }
