@@ -11,6 +11,13 @@ namespace App
     {
         public static RomanNumber Parse(string input) => RomanNumberParser.FromString(input);
 
+        public static explicit operator short(RomanNumber rn) => (short)rn.Value;
+        public static explicit operator byte(RomanNumber rn) => (byte)rn.Value;
+        public static explicit operator long(RomanNumber rn) => rn.Value;
+        public static explicit operator int(RomanNumber rn) => rn.Value;
+        public static explicit operator float(RomanNumber rn) => rn.Value;
+        public static explicit operator double(RomanNumber rn) => rn.Value;
+
         public override string? ToString()
         {
             Dictionary<int, String> ranges = new()
@@ -55,8 +62,5 @@ namespace App
             // цифри занадто "далекі" для віднімання цифр, що є "5"-ками
             return leftDigit >= rightDigit || !(leftDigit != 0 && rightDigit / leftDigit > 10 || leftDigit == 5 || leftDigit == 50 || leftDigit == 500);
         }
-
-
-        
     }
 }

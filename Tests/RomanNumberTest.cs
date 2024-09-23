@@ -1,5 +1,4 @@
 using App;
-using System.Runtime.CompilerServices;
 
 namespace Tests
 {
@@ -17,6 +16,54 @@ namespace Tests
             { 'D', 500 },
             { 'M', 1000 }
         };
+
+        [TestMethod]
+        public void TestToShort()
+        {
+            RomanNumber rn = new(123);
+            short result = (short)rn;
+            Assert.AreEqual(123, result);
+        }
+
+        [TestMethod]
+        public void TestToByte()
+        {
+            RomanNumber rn = new(10);
+            byte result = (byte)rn;
+            Assert.AreEqual(10, result);
+        }
+
+        [TestMethod]
+        public void TestToInt()
+        {
+            RomanNumber rn = new(497);
+            int result = (int)rn;
+            Assert.AreEqual(497, result);
+        }
+
+        [TestMethod]
+        public void TestToFloat()
+        {
+            RomanNumber rn = new(28);
+            float result = (float)rn;
+            Assert.AreEqual(28f, result);
+        }
+
+        [TestMethod]
+        public void TestToDouble()
+        {
+            RomanNumber rn = new(352);
+            double result = (double)rn;
+            Assert.AreEqual(352d, result);
+        }
+
+        [TestMethod]
+        public void TestParseToInt()
+        {
+            RomanNumber rn = RomanNumber.Parse("CXXIII"); //123
+            int result = (int)rn;
+            Assert.AreEqual(123, result);
+        }
 
         [TestMethod]
         public void ToStringTest()
@@ -63,62 +110,88 @@ namespace Tests
         [TestMethod]
         public void ParseTest()
         {
-            Dictionary<String, int> testCases = new()
-            {
-                { "N", 0 },
-                { "I", 1 },
-                { "II", 2 },
-                { "III", 3 },
-                { "IIII", 4 },
-                { "V", 5 },
-                { "X", 10 },
-                { "D", 500 },
-                { "IV", 4 },
-                { "VI", 6 },
-                { "VII", 7 },
-                { "VIII", 8 },
-                { "XI", 11 },
-                { "XII", 12 },
-                { "XIII", 13 },
-                { "IX", 9 },
-                { "MM", 2000 },
-                { "MCM", 1900 },
-                { "XL", 40 },
-                { "XC", 90 },
-                { "CD", 400 },
-                { "CMII", 902 },
-                //{ "DCCCC", 900 },
-                //{ "XIXIIII", 23 },
-                //{ "XXXXX", 50 },
-                //{ "DDMD", 1500 }
-            };
+            TestCase[] testCases =
+            [
+                new( "N", 0 ),
+                new( "I", 1 ),
+                new( "II", 2 ),
+                new( "III", 3 ),
+                new( "IIII", 4 ),
+                new( "V", 5 ),
+                new( "X", 10 ),
+                new( "D", 500 ),
+                new( "IV", 4 ),
+                new( "VI", 6 ),
+                new( "VII", 7 ),
+                new( "VIII", 8 ),
+                new( "XI", 11 ),
+                new( "XII", 12 ),
+                new( "XIII", 13 ),
+                new( "IX", 9 ),
+                new( "MM", 2000 ),
+                new( "MCM", 1900 ),
+                new( "XL", 40 ),
+                new( "XC", 90 ),
+                new( "CD", 400 ),
+                new( "CMII", 902 ),
+                new( "DCCCC", 900 ),
+                new( "XXXXX", 50 ),
+                new( "CCCC", 400)
+            ];
       
             foreach (var testCase in testCases)
             {
-                RomanNumber rn = RomanNumber.Parse(testCase.Key);
-                //rn = null!;
-                Assert.IsNotNull(rn, $"Parse result of '{testCase.Key}' is not null");
+                RomanNumber rn = RomanNumber.Parse(testCase.Source);
+                Assert.IsNotNull(rn, $"Parse result of '{testCase.Source}' is not null");
                 Assert.AreEqual(
                     testCase.Value, 
                     rn.Value, 
-                    $"Parse '{testCase.Key}' => {testCase.Value}"
+                    $"Parse '{testCase.Source}' => {testCase.Value}"
                 );
             }
 
             /* ¬ин€ток парсера Ч окр≥м причини вин€тку м≥стить в≥домост≥ 
              * про м≥сце виникненн€ помилки (позиц≥€ у р€дку)
              */
-            Object[][] excCases = [
-                ["W", 'W', 0 ],
-                ["CS", 'S', 1 ],
-                ["CX1", '1', 2 ],
+
+            String tpl1 = "illegal symbol '%r1'";
+            String tpl2 = "in position %r1";
+            String tpl3 = "RomanNumber.Parse";
+            String tpl4 = "illegal sequence: more than one smaller digits before '%r1'";
+            String tpl5 = "illegal sequence: '%r1' before '%r2'";
+
+            testCases = [
+                new( "W", [tpl1.R(["W"]), tpl2.R(["0"]), tpl3]),
+                new( "CS", [tpl1.R(["S"]), tpl2.R(["1"]), tpl3]),
+                new( "CX1", [tpl1.R(["1"]), tpl2.R(["2"]), tpl3]),
+                // ѕеред цифрою Ї дек≥лька цифр, менших за нењ
+                // !! кожна пара цифр Ч правильна комб≥нац≥€,
+                // проблема створюЇтьс€ щонайменше трьома цифрами
+                new( "IIX", [tpl4.R(["X"]), tpl2.R(["2"]), tpl3]),
+                new( "VIX", [tpl4.R(["X"]), tpl2.R(["2"]), tpl3]),
+                new( "XXC", [tpl4.R(["C"]), tpl2.R(["2"]), tpl3]),
+                new( "IXC", [tpl4.R(["C"]), tpl2.R(["2"]), tpl3]),
+                // "в≥дстань" м≥ж цифрами при в≥дн≥манн≥:
+                // в≥дн≥матись можуть I, X, C причому в≥д
+                // двох сус≥дних цифр (I Ц в≥д V та X, ...)
+                new( "VX", [tpl5.R(["V", "X"]), tpl2.R(["0"]), tpl3]),
+                new( "LC", [tpl5.R(["L", "C"]), tpl2.R(["0"]), tpl3]),
+                new( "DM", [tpl5.R(["D", "M"]), tpl2.R(["0"]), tpl3]),
+                new( "IC", [tpl5.R(["I", "C"]), tpl2.R(["0"]), tpl3]),
+                new( "MIM", [tpl5.R(["I", "M"]), tpl2.R(["1"]), tpl3]),
+                new( "MVM", [tpl5.R(["V", "M"]), tpl2.R(["1"]), tpl3]),
+                new( "MXM", [tpl5.R(["X", "M"]), tpl2.R(["1"]), tpl3]),
+                new( "CVC", [tpl5.R(["V", "C"]), tpl2.R(["1"]), tpl3]),
+                new( "MCVC", [tpl5.R(["V", "C"]), tpl2.R(["2"]), tpl3]),
+                new( "DCIC", [tpl5.R(["I", "C"]), tpl2.R(["2"]), tpl3]),
+                new( "IM", [tpl5.R(["I", "M"]), tpl2.R(["0"]), tpl3]),
             ];
             
-            foreach(var excCase in excCases) 
+            foreach(var excCase in testCases) 
             {
                 var ex = Assert.ThrowsException<FormatException>(
-                    () => RomanNumber.Parse(excCase[0].ToString()!),
-                    $"RomanNumber.Parse(\"{excCase[0]}\") must throw FormatException"
+                    () => RomanNumber.Parse(excCase.Source),
+                    $"RomanNumber.Parse(\"{excCase.Source}\") must throw FormatException"
                 );
 
                 /* ЌакладаЇмо вимоги на пов≥домленн€:
@@ -126,19 +199,13 @@ namespace Tests
                  * Ч маЇ м≥стити позиц≥ю символу в р€дку
                  * Ч маЇ м≥стити назву методу та класу*/
                  
-                Assert.IsTrue(
-                    ex.Message.Contains($"illegal symbol '{excCase[1]}'"),
-                    $"ex.Message must contain symbol which cause error: '{excCase[1]}', ex.Message: {ex.Message}"
-                );
-                Assert.IsTrue(
-                    ex.Message.Contains($"in position {excCase[2]}"),
-                    $"ex.Message must contain error symbol position"
-                );
-                Assert.IsTrue(
-                    ex.Message.Contains(nameof(RomanNumber))
-                    && ex.Message.Contains(nameof(RomanNumber.Parse)),
-                    $"ex.Message must contain names of class and method, ex.Message: {ex.Message}"
-                );
+                foreach (String part in excCase.ExMessageParts!)
+                {
+                    Assert.IsTrue(
+                        ex.Message.Contains(part),
+                        $"ex.Message must contain '{part}'; ex.Message: {ex.Message}"
+                    );
+                }
             }
         }
 
@@ -181,6 +248,40 @@ namespace Tests
                     $"DigitValue ex.Message should contain a text 'not valid Roman digit' which cause exception: symbol: '{digit}', ex.Message: '{ex.Message}'."
                 );
             }
+        }
+    }
+
+    record TestCase(String Source, int? Value, IEnumerable<String>? ExMessageParts = null)
+    {
+        public TestCase(String Source, IEnumerable<String> parts) : this(Source, null, parts) { }
+    }
+
+    public static class StringExtension
+    {
+        public static String F(this String Source, IEnumerable<String> olds, IEnumerable<String> news)
+        {
+            String res = Source;
+
+            foreach (var item in olds.Zip(news))
+            {
+                res = res.Replace(item.First, item.Second);
+            }
+
+            return res;
+        }
+
+        public static String R(this String Source, IEnumerable<String> replaces)
+        {
+            String res = Source;
+            int i = 0;
+
+            foreach (var r in replaces)
+            {
+                ++i;
+                res = res.Replace($"%r{i}", r);
+            }
+
+            return res;
         }
     }
 }
