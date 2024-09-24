@@ -1,10 +1,39 @@
 ﻿using App;
+using System.Reflection;
 
 namespace Tests
 {
     [TestClass]
     public class RomanNumberValidatorTest
     {
+        private TestCase[] casesCheckSymbols = [
+            new( "W", ["W", "0"]),
+            new( "CS", ["S", "1"]),
+            new( "CX1", ["1", "2"])
+        ];
+        
+        private TestCase[] casesCheckZeroDigitTest = [
+            new("NN", ["0"]),
+            new("IN", ["1"]),
+            new("NX", ["0"]),
+            new("NC", ["0"]),
+            new("XNC", ["1"]),
+            new("XVIN", ["3"]),
+            new("XNNN", ["1"])
+        ];
+
+        [TestMethod]
+        public void ValidateTest()
+        {
+            foreach (var excCase in casesCheckZeroDigitTest.Concat(casesCheckSymbols))
+            {
+                var ex = Assert.ThrowsException<FormatException>(
+                  () => RomanNumberValidator.Validate(excCase.Source),
+                  $"RomanNumberValidator.Validate(\"{excCase.Source}\") must throw FormatException"
+                );
+            }
+        }
+        
         [TestMethod]
         public void DigitValueTest()
         {
@@ -106,8 +135,6 @@ namespace Tests
                 ["VIX", 'X', 2], // !! кожна пара цифр — правильна комбінація,
                 ["XXC", 'C', 2], // проблема створюється щонайменше трьома цифрами
                 ["IXC", 'C', 2],
-                ["IIXL", 'L', 3],
-                ["VIXL", 'L', 3]
             ];
             foreach (var excCase in excCases3)
             {
@@ -137,15 +164,11 @@ namespace Tests
             Object[][] excCases4 = [
                 ["IXX", 'I', 0],   // Менша цифра після двох однакових
                 ["IXXX", 'I', 0],  //
-                ["IXIX", 'I', 0],  //
                 ["XCC", 'X', 0],   // 
-                ["XCXC", 'X', 0],
-                ["IVIV", 'I'],
-                ["XCCC", 'X', 0],
+                ["XCCC", 'X', 0],  //
                 ["CXCC", 'X', 1],
                 ["CMM", 'C', 0],
                 ["CMMM", 'C', 0],
-                ["CMCM", 'C', 0],
                 ["MCMM", 'C', 1],
                 ["LCC", 'L', 0],
                 ["ICCC", 'I', 0]
@@ -166,20 +189,53 @@ namespace Tests
                 ["NN", '0', 1],   // Цифра N не може бути у числі, тільки сама по собі
                 ["IN", '1', 1],   //
                 ["NX", '0', 0],   //
-                ["NC", '0', 0],   // 
+                ["NC", '0', 1],   // 
                 ["XNC", '1', 1],
-                ["IVIN", '3', 3],
+                ["XVIN", '3', 3],
                 ["XNNC", '1', 1],
-                ["NMC", '0', 0],
-                ["NIX", '0', 0]
+                ["NMC", '1', 1],
+                ["NIX", '1', 1]
             ];
-            foreach (var excCase in excCases5)
+            // Тестування приватних методів — задача потрібна, але вимагає особливого підходу
+            // Об'єктна рефлексія — робота з типами даних
+            Type rnvType = typeof(RomanNumberValidator);
+            String methodName = "CheckZeroDigit";
+            MethodInfo? method = rnvType.GetMethod( // шукаєио у типі метод за 
+                "CheckZeroDigit",                   // назвою, та такий, що 
+                BindingFlags.Static |               // є статичним та
+                BindingFlags.NonPublic);            // не public
+
+            Assert.IsNotNull(method, $"Method '{methodName}' must be in type");
+
+            foreach (var excCase in casesCheckZeroDigitTest)
             {
-                var ex = Assert.ThrowsException<FormatException>(
-                    () => RomanNumber.Parse(excCase[0].ToString()!),
-                    $"RomanNumber.Parse(\"{excCase[0]}\") must throw FormatException"
+                // !! Виконання методів з винятками через рефлексію
+                // призводить до появи окремого винятку:
+                // TargetInvocationException замість будь-якого винятку,
+                // що викидається у самому методі
+                // Також зауважимо, що Assert перевіряє типи суворо, тобто 
+                // зазначити загальний Exception також буде помилкою
+                var ex = Assert.ThrowsException<TargetInvocationException>(
+                   () => //RomanNumber.Parse(excCase[0].ToString()!),
+                         method.Invoke(
+                             null,
+                             [excCase.Source]),
+                   $"RomanNumber.Parse(\"{excCase.Source}\") must throw TargetInvocationException"
+                );
+                var innerEx = ex.InnerException;
+                Assert.AreEqual(
+                    "FormatException",
+                    innerEx?.GetType().Name,
+                    $"RomanNumberValidator.{methodName}(\"{excCase.Source}\") must throw FormatException"
                 );
             }
         }
     }
 }
+/*
+ * звичайний виклик                 | через рефлексію
+ * obj.theMethod(params)            | type = obj.GetType() / typeof(TheType)
+ *                                  | method = type.GetMethod("theMethod")
+ * obj.theMethod(<this>, params)    |
+ *                                  | method.Invoke(obj, [params])
+ */

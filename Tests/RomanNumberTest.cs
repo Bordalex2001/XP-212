@@ -159,6 +159,7 @@ namespace Tests
             String tpl3 = "RomanNumber.Parse";
             String tpl4 = "illegal sequence: more than one smaller digits before '%r1'";
             String tpl5 = "illegal sequence: '%r1' before '%r2'";
+            String[] all = [tpl3];
 
             testCases = [
                 new( "W", [tpl1.R(["W"]), tpl2.R(["0"]), tpl3]),
@@ -185,6 +186,27 @@ namespace Tests
                 new( "MCVC", [tpl5.R(["V", "C"]), tpl2.R(["2"]), tpl3]),
                 new( "DCIC", [tpl5.R(["I", "C"]), tpl2.R(["2"]), tpl3]),
                 new( "IM", [tpl5.R(["I", "M"]), tpl2.R(["0"]), tpl3]),
+                // Менша цифра після двох однакових
+                new( "IXX", [tpl4.R(["I"]), tpl2.R(["0"]), tpl3]),
+                new( "IXXX", [tpl4.R(["I"]), tpl2.R(["0"]), tpl3]),
+                new( "XCC", [tpl4.R(["X"]), tpl2.R(["0"]), tpl3]),
+                new( "XCCC", [tpl4.R(["X"]), tpl2.R(["0"]), tpl3]),
+                new( "CXCC", [tpl4.R(["X"]), tpl2.R(["1"]), tpl3]),
+                new( "CMM", [tpl4.R(["C"]), tpl2.R(["0"]), tpl3]),
+                new( "CMMM", [tpl4.R(["C"]), tpl2.R(["0"]), tpl3]),
+                new( "MCMM", [tpl4.R(["C"]), tpl2.R(["1"]), tpl3]),
+                new( "LCC", [tpl4.R(["L"]), tpl2.R(["0"]), tpl3]),
+                new( "ICCC", [tpl4.R(["I"]), tpl2.R(["0"]), tpl3]),
+                // Цифра N не може бути у числі, тільки сама по собі
+                new( "NN", [tpl1.R(["0"]), tpl2.R(["1"]), tpl3]),
+                new( "IN", [tpl1.R(["1"]), tpl2.R(["1"]), tpl3]),
+                new( "NX", [tpl1.R(["0"]), tpl2.R(["0"]), tpl3]),
+                new( "NC", [tpl1.R(["0"]), tpl2.R(["1"]), tpl3]),
+                new( "XNC", [tpl1.R(["1"]), tpl2.R(["1"]), tpl3]),
+                new( "XVIN", [tpl1.R(["3"]), tpl2.R(["3"]), tpl3]),
+                new( "XNNC", [tpl1.R(["1"]), tpl2.R(["1"]), tpl3]),
+                new( "NMC", [tpl1.R(["1"]), tpl2.R(["1"]), tpl3]),
+                new( "NIX", [tpl1.R(["1"]), tpl2.R(["1"]), tpl3]),
             ];
             
             foreach(var excCase in testCases) 
