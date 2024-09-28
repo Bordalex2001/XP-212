@@ -28,8 +28,7 @@ namespace App
                 if (IsInvalidLessCounter(lessCounter, maxCounter))
                 {
                     throw new FormatException(
-                        $"{nameof(RomanNumber)}.Parse('{Value}') error: " +
-                        $"illegal sequence: more than one smaller digits before '{Value[Value.Length - 1]}' in position {Value.Length - 1}");
+                        $"{nameof(RomanNumber)}.Parse('{Value}') error: illegal sequence: more than one smaller digits before '{Value[Value.Length - 1]}' in position {Value.Length - 1}");
                 }
                 result += digit < rightDigit ? -digit : digit;
                 rightDigit = digit;
