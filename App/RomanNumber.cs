@@ -11,6 +11,11 @@ namespace App
     {
         public static RomanNumber Parse(string input) => RomanNumberParser.FromString(input);
 
+        public RomanNumber Plus(RomanNumber second) => 
+            second == null
+            ? throw new ArgumentNullException(nameof(second)) 
+            : this with { Value = Value + second.Value };
+
         public static explicit operator short(RomanNumber rn) => (short)rn.Value;
         public static explicit operator byte(RomanNumber rn) => (byte)rn.Value;
         public static explicit operator long(RomanNumber rn) => rn.Value;
@@ -55,12 +60,6 @@ namespace App
             }
             
             return result.ToString();
-        }
-
-        public static bool CheckDigitRatio(int leftDigit, int rightDigit)
-        {
-            // цифри занадто "далекі" для віднімання цифр, що є "5"-ками
-            return leftDigit >= rightDigit || !(leftDigit != 0 && rightDigit / leftDigit > 10 || leftDigit == 5 || leftDigit == 50 || leftDigit == 500);
         }
     }
 }

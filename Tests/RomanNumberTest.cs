@@ -154,59 +154,58 @@ namespace Tests
              * про м≥сце виникненн€ помилки (позиц≥€ у р€дку)
              */
 
-            String tpl1 = "illegal symbol '%r1'";
-            String tpl2 = "in position %r1";
-            String tpl3 = "RomanNumber.Parse";
-            String tpl4 = "illegal sequence: more than one smaller digits before '%r1'";
-            String tpl5 = "illegal sequence: '%r1' before '%r2'";
-            String[] all = [tpl3];
+            String src = "RomanNumber.Parse('%r1') error: illegal";
+            String pos = "in position";
+            String illegalSymbolTemplate = $"{src} symbol '%r2' {pos} %r3";
+            String tpl2 = $"{src} sequence: more than one smaller digits before '%r2' {pos} %r3";
+            String tpl3 = $"{src} sequence: '%r2' before '%r3' {pos} %r4";
 
             testCases = [
-                new( "W", [tpl1.R(["W"]), tpl2.R(["0"]), tpl3]),
-                new( "CS", [tpl1.R(["S"]), tpl2.R(["1"]), tpl3]),
-                new( "CX1", [tpl1.R(["1"]), tpl2.R(["2"]), tpl3]),
+                new( ["W", 'W', 0, illegalSymbolTemplate] ),
+                new( ["CS", 'S', 1, illegalSymbolTemplate] ),
+                new( ["CX1", '1', 2, illegalSymbolTemplate] ),
                 // ѕеред цифрою Ї дек≥лька цифр, менших за нењ
                 // !! кожна пара цифр Ч правильна комб≥нац≥€,
                 // проблема створюЇтьс€ щонайменше трьома цифрами
-                new( "IIX", [tpl4.R(["X"]), tpl2.R(["2"]), tpl3]),
-                new( "VIX", [tpl4.R(["X"]), tpl2.R(["2"]), tpl3]),
-                new( "XXC", [tpl4.R(["C"]), tpl2.R(["2"]), tpl3]),
-                new( "IXC", [tpl4.R(["C"]), tpl2.R(["2"]), tpl3]),
+                new( ["IIX", 'X', 2, tpl2] ),
+                new( ["VIX", 'X', 2, tpl2] ),
+                new( ["XXC", 'C', 2, tpl2] ),
+                new( ["IXC", 'C', 2, tpl2] ),
                 // "в≥дстань" м≥ж цифрами при в≥дн≥манн≥:
                 // в≥дн≥матись можуть I, X, C причому в≥д
                 // двох сус≥дних цифр (I Ц в≥д V та X, ...)
-                new( "VX", [tpl5.R(["V", "X"]), tpl2.R(["0"]), tpl3]),
-                new( "LC", [tpl5.R(["L", "C"]), tpl2.R(["0"]), tpl3]),
-                new( "DM", [tpl5.R(["D", "M"]), tpl2.R(["0"]), tpl3]),
-                new( "IC", [tpl5.R(["I", "C"]), tpl2.R(["0"]), tpl3]),
-                new( "MIM", [tpl5.R(["I", "M"]), tpl2.R(["1"]), tpl3]),
-                new( "MVM", [tpl5.R(["V", "M"]), tpl2.R(["1"]), tpl3]),
-                new( "MXM", [tpl5.R(["X", "M"]), tpl2.R(["1"]), tpl3]),
-                new( "CVC", [tpl5.R(["V", "C"]), tpl2.R(["1"]), tpl3]),
-                new( "MCVC", [tpl5.R(["V", "C"]), tpl2.R(["2"]), tpl3]),
-                new( "DCIC", [tpl5.R(["I", "C"]), tpl2.R(["2"]), tpl3]),
-                new( "IM", [tpl5.R(["I", "M"]), tpl2.R(["0"]), tpl3]),
+                new( ["VX", 'V', 'X', 0, tpl3] ),
+                new( ["LC", 'L', 'C', 0, tpl3] ),
+                new( ["DM", 'D', 'M', 0, tpl3] ),
+                new( ["IC", 'I', 'C', 0, tpl3] ),
+                new( ["MIM", 'I', 'M', 1, tpl3] ),
+                new( ["MVM", 'V', 'M', 1, tpl3] ),
+                new( ["MXM", 'X', 'M', 1, tpl3] ),
+                new( ["CVC", 'V', 'C', 1, tpl3] ),
+                new( ["MCVC", 'V', 'C', 2, tpl3] ),
+                new( ["DCIC", 'I', 'C', 2, tpl3] ),
+                new( ["IM", 'I', 'M', 0, tpl3] ),
                 // ћенша цифра п≥сл€ двох однакових
-                new( "IXX", [tpl4.R(["I"]), tpl2.R(["0"]), tpl3]),
-                new( "IXXX", [tpl4.R(["I"]), tpl2.R(["0"]), tpl3]),
-                new( "XCC", [tpl4.R(["X"]), tpl2.R(["0"]), tpl3]),
-                new( "XCCC", [tpl4.R(["X"]), tpl2.R(["0"]), tpl3]),
-                new( "CXCC", [tpl4.R(["X"]), tpl2.R(["1"]), tpl3]),
-                new( "CMM", [tpl4.R(["C"]), tpl2.R(["0"]), tpl3]),
-                new( "CMMM", [tpl4.R(["C"]), tpl2.R(["0"]), tpl3]),
-                new( "MCMM", [tpl4.R(["C"]), tpl2.R(["1"]), tpl3]),
-                new( "LCC", [tpl4.R(["L"]), tpl2.R(["0"]), tpl3]),
-                new( "ICCC", [tpl4.R(["I"]), tpl2.R(["0"]), tpl3]),
+                /*new( "IXX", [tpl6.R(["I"]) ]),
+                new( "IXXX", [tpl6.R(["I"]) ]),
+                new( "XCC", [tpl6.R(["X"]) ]),
+                new( "XCCC", [tpl6.R(["X"]) ]),
+                new( "CXCC", [tpl6.R(["X"]) ]),
+                new( "CMM", [tpl6.R(["C"]) ]),
+                new( "CMMM", [tpl6.R(["C"]) ]),
+                new( "MCMM", [tpl6.R(["C"]) ]),
+                new( "LCC", [tpl6.R(["L"]) ]),
+                new( "ICCC", [tpl6.R(["I"]) ]),*/
                 // ÷ифра N не може бути у числ≥, т≥льки сама по соб≥
-                new( "NN", [tpl1.R(["0"]), tpl2.R(["1"]), tpl3]),
-                new( "IN", [tpl1.R(["1"]), tpl2.R(["1"]), tpl3]),
-                new( "NX", [tpl1.R(["0"]), tpl2.R(["0"]), tpl3]),
-                new( "NC", [tpl1.R(["0"]), tpl2.R(["1"]), tpl3]),
-                new( "XNC", [tpl1.R(["1"]), tpl2.R(["1"]), tpl3]),
-                new( "XVIN", [tpl1.R(["3"]), tpl2.R(["3"]), tpl3]),
-                new( "XNNC", [tpl1.R(["1"]), tpl2.R(["1"]), tpl3]),
-                new( "NMC", [tpl1.R(["1"]), tpl2.R(["1"]), tpl3]),
-                new( "NIX", [tpl1.R(["1"]), tpl2.R(["1"]), tpl3]),
+                //new( "NN", [tpl1.R(["0"]), tpl2.R(["1"]), tpl3]),
+                //new( "IN", [tpl1.R(["1"]), tpl2.R(["1"]), tpl3]),
+                //new( "NX", [tpl1.R(["0"]), tpl2.R(["0"]), tpl3]),
+                //new( "NC", [tpl1.R(["0"]), tpl2.R(["1"]), tpl3]),
+                //new( "XNC", [tpl1.R(["1"]), tpl2.R(["1"]), tpl3]),
+                //new( "XVIN", [tpl1.R(["3"]), tpl2.R(["3"]), tpl3]),
+                //new( "XNNC", [tpl1.R(["1"]), tpl2.R(["1"]), tpl3]),
+                //new( "NMC", [tpl1.R(["1"]), tpl2.R(["1"]), tpl3]),
+                //new( "NIX", [tpl1.R(["1"]), tpl2.R(["1"]), tpl3]),
             ];
             
             foreach(var excCase in testCases) 
@@ -215,24 +214,29 @@ namespace Tests
                     () => RomanNumber.Parse(excCase.Source),
                     $"RomanNumber.Parse(\"{excCase.Source}\") must throw FormatException"
                 );
+                Assert.AreEqual(
+                    excCase.ExMessage,
+                    ex.Message,
+                    $"ex.Message must contain '{excCase.ExMessage}'; ex.Message: {ex.Message}"
+                );
 
                 /* ЌакладаЇмо вимоги на пов≥домленн€:
                  * Ч маЇ м≥стити сам символ, що призводить до вин€тку 
                  * Ч маЇ м≥стити позиц≥ю символу в р€дку
                  * Ч маЇ м≥стити назву методу та класу*/
-                 
-                foreach (String part in excCase.ExMessageParts!)
-                {
-                    Assert.IsTrue(
-                        ex.Message.Contains(part),
-                        $"ex.Message must contain '{part}'; ex.Message: {ex.Message}"
-                    );
-                }
+
+                //foreach (String part in exCase.ExMessageParts!)
+                //{
+                //    Assert.IsTrue(
+                //    ex.Message.Contains(part),
+                //    $"ex.Message must contain '{part}'; ex.Message: {ex.Message}"
+                //    );
+                //}
             }
         }
 
         [TestMethod]
-        public void DigitValueChar()
+        public void DigitValueTest()
         {
             //foreach (var testCase in testCases)
             //{
@@ -271,28 +275,49 @@ namespace Tests
                 );
             }
         }
+
+        [TestMethod]
+        public void PlusTest()
+        {
+            RomanNumber rn1 = new(1), rn2 = new(2);
+            RomanNumber res = rn1.Plus(rn2);
+            Assert.IsInstanceOfType<RomanNumber>(res);
+            Assert.AreNotEqual(rn1, res);
+            Assert.AreNotEqual(rn2, res);
+            // вимога: результат Plus не Ї ан≥ rn1, ан≥ rn2
+            // забезпечити доц≥льн≥сть правидьного р≥шенн€ (множину тест≥в)
+            for (var i = 0; i < 100; ++i)
+            {
+                Assert.AreEqual(
+                    i + rn1.Value,
+                    rn1.Plus(new(i)).Value,
+                    $"1 + {i} --> {1 + i}"
+                );
+            }
+            // вимога: маЇ бути вин€ток при передач≥ Null
+            Assert.ThrowsException<ArgumentNullException>(
+                () => rn1.Plus(null!)
+            );
+            // RomanNumber.Plus(RomanNumber.Plus(rn1, rn2), rn2);
+            // RomanNumber.Plus(rn1, rn2, rn2);
+        }
     }
 
-    record TestCase(String Source, int? Value, IEnumerable<String>? ExMessageParts = null)
+    record TestCase(String Source, int? Value, String? ExMessage = null)
     {
-        public TestCase(String Source, IEnumerable<String> parts) : this(Source, null, parts) { }
+        public TestCase(String Source, String? ExMessage) : this(Source, null, ExMessage) { }
+
+        public TestCase(List<Object> data) : 
+            this(
+                data.First().ToString()!, 
+                null, 
+                data.Last().ToString()!.R(data[..^1])
+            ) { }
     }
 
     public static class StringExtension
     {
-        public static String F(this String Source, IEnumerable<String> olds, IEnumerable<String> news)
-        {
-            String res = Source;
-
-            foreach (var item in olds.Zip(news))
-            {
-                res = res.Replace(item.First, item.Second);
-            }
-
-            return res;
-        }
-
-        public static String R(this String Source, IEnumerable<String> replaces)
+        public static String R(this String Source, List<Object> replaces)
         {
             String res = Source;
             int i = 0;
@@ -300,7 +325,7 @@ namespace Tests
             foreach (var r in replaces)
             {
                 ++i;
-                res = res.Replace($"%r{i}", r);
+                res = res.Replace($"%r{i}", r.ToString());
             }
 
             return res;

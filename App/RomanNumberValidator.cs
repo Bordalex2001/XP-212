@@ -28,7 +28,7 @@ namespace App
                 if (IsInvalidLessCounter(lessCounter, maxCounter))
                 {
                     throw new FormatException(
-                        $"{nameof(RomanNumber)}.Parse() " +
+                        $"{nameof(RomanNumber)}.Parse('{Value}') error: " +
                         $"illegal sequence: more than one smaller digits before '{Value[Value.Length - 1]}' in position {Value.Length - 1}");
                 }
                 result += digit < rightDigit ? -digit : digit;
@@ -44,7 +44,7 @@ namespace App
             }
         }
 
-        public static void CheckSequence(String input)
+        private static void CheckSequence(String input)
         {
             int maxDigit = 0;     // найбільша цифра, що пройдена
             int lessCounter = 0;  // кількість цифр, менших за неї
@@ -72,20 +72,19 @@ namespace App
                 if (lessCounter > 1 || lessCounter > 0 && maxCounter > 1)
                 {
                     throw new FormatException(
-                        $"{nameof(RomanNumber)}.Parse('{input}') " +
-                        $"illegal sequence: more than one smaller digits " +
-                        $"before '{input[i + 2]}' in position {i + 2}");
+                        $"{nameof(RomanNumber)}.Parse('{input}') illegal sequence: more than one smaller digits before '{input[i + 2]}' in position {i + 2}"
+                    );
                 }
             }
         }
 
-        public static bool CheckDigitRatio(int leftDigit, int rightDigit)
+        private static bool CheckDigitRatio(int leftDigit, int rightDigit)
         {
             // цифри занадто "далекі" для віднімання цифр, що є "5"-ками
             return leftDigit >= rightDigit || !(leftDigit != 0 && rightDigit / leftDigit > 10 || leftDigit == 5 || leftDigit == 50 || leftDigit == 500);
         }
 
-        public static void CheckDigitRatios(String input)
+        private static void CheckDigitRatios(String input)
         {
             for (int i = 0; i < input.Length - 1; ++i)
             {
@@ -96,9 +95,7 @@ namespace App
                     leftDigit == 5 || leftDigit == 50 || leftDigit == 500)))
                 {
                     throw new FormatException(
-                        $"{nameof(RomanNumber)}.Parse() " +
-                        $"illegal sequence: '{input[i]}' before '{input[i + 1]}' " +
-                        $"in position {i}");
+                        $"{nameof(RomanNumber)}.Parse() illegal sequence: '{input[i]}' before '{input[i + 1]}' in position {i}");
                 }
             }
         }
@@ -113,7 +110,7 @@ namespace App
             }
             catch (ArgumentException)
             {
-                throw new FormatException($"{nameof(RomanNumber)}.Parse() found illegal symbol '{c}' in position {pos}");
+                throw new FormatException($"RomanNumber.Parse('{Value}') error: illegal symbol '{c}' in position {pos}");
             }
 
             return digit;
@@ -147,7 +144,7 @@ namespace App
         {
             if (!CheckDigitRatio(digit, rightDigit))
             {
-                throw new FormatException($"{nameof(RomanNumber)}.Parse() illegal sequence: '{c}' before '{Value[pos + 1]}' in position {pos}");
+                throw new FormatException($"{nameof(RomanNumber)}.Parse('{Value}') error: illegal sequence: '{c}' before '{Value[pos + 1]}' in position {pos}");
             }
         }
 
@@ -176,12 +173,15 @@ namespace App
         {
             for (int i = 0; i < input.Length; ++i)
             {
-                try { RomanNumberParser.DigitValue(input[i]); }
+                try 
+                { 
+                    RomanNumberParser.DigitValue(input[i]); 
+                }
                 catch
                 {
                     throw new FormatException(
-                        $"{nameof(RomanNumber)}.Parse()" +
-                        $" found illegal symbol '{input[i]}' in position {i}");
+                        $"RomanNumber.Parse('{input}') error: illegal symbol '{input[i]}' in position {i}"
+                    );
                 }
             }
         }

@@ -8,13 +8,13 @@ namespace App
 {
     public class RomanNumberParser
     {
-        public static RomanNumber FromString(String input)
+        public static RomanNumber FromString(String Value)
         {
-            RomanNumberValidator.Validate(input);
+            RomanNumberValidator.Validate(Value);
 
             int res = 0;
             int rightDigit = 0;
-            foreach (char c in input.Reverse())
+            foreach (char c in Value.Reverse())
             {
                 int digit = DigitValue(c);
                 res += digit < rightDigit ? -digit : digit;
