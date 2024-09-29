@@ -100,7 +100,7 @@ namespace Tests
              * "IIII" -Parse-> 4 -ToString-> "IV" x 
              * 4 -ToString-> "IV" -Parse-> 4 v
              */
-            for (int i = 0; i <= 1000; i++)
+            for (int i = 0; i <= 2000; i++)
             {
                 int c = RomanNumberParser.FromString(new RomanNumber(i).ToString()!).Value;
                 Assert.AreEqual(i, c, $"Cross test for {i}: {new RomanNumber(i)} -> {c}");
